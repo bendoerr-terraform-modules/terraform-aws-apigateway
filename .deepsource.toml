@@ -10,4 +10,4 @@ name = "terraform"
 name = "go"
 
   [analyzers.meta]
-  import_root = "github.com/bendoerr-terraform-modules/terraform-aws-module-template/test"
+  import_root = "github.com/bendoerr-terraform-modules/terraform-aws-apigateway/test"
