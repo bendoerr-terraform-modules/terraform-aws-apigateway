@@ -1,0 +1,59 @@
+name: Test
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  terratest:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
+        with:
+          go-version-file: test/go.mod
+          cache: true
+
+      - uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        with:
+          role-to-assume: ${{ vars.CORE_APPLY_ROLE }}
+          aws-region: us-east-1
+
+      - run: |
+          aws configure set aws_access_key_id ${{ env.AWS_ACCESS_KEY_ID }} --profile core-profile
+          aws configure set aws_secret_access_key ${{ env.AWS_SECRET_ACCESS_KEY }} --profile core-profile
+          aws configure set aws_session_token ${{ env.AWS_SESSION_TOKEN }} --profile core-profile
+
+      - uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        with:
+          role-to-assume: ${{ vars.SANDBOX_APPLY_ROLE }}
+          aws-region: us-east-1
+
+      - shell: bash
+        working-directory: test
+        env:
+          TF_VAR_route53_profile: core-profile
+          TF_VAR_route53_zone_id: ${{ secrets.CORE_HOSTED_ZONE_ID }}
+          TF_VAR_route53_zone_name: ${{ secrets.CORE_HOSTED_ZONE_NAME }}
+        run: |
+          go install github.com/jstemmer/go-junit-report@latest
+          go test -timeout 20m -v ./... | tee report.txt
+          go-junit-report -set-exit-code < report.txt > report.xml
+
+      - uses: test-summary/action@31493c76ec9e7aa675f1585d3ed6f1da69269a86 # v2.4
+        with:
+          paths: test/report.xml
+        if: always()

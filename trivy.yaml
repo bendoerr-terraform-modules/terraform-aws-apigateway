@@ -1,0 +1,6 @@
+scan:
+  skip-dirs:
+    - ./.terraform
+    - ./.infracost
+    - ./examples/*/.terraform
+    - ./examples/*/.infracost

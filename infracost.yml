@@ -1,0 +1,5 @@
+version: 0.1
+projects:
+  - path: examples/simple
+    name: Simple Example
+    usage_file: examples/simple/infracost-usage.yml
