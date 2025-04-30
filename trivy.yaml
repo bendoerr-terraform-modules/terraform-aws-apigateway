@@ -4,3 +4,5 @@ scan:
     - ./.infracost
     - ./examples/*/.terraform
     - ./examples/*/.infracost
+    - ./modules/*/.terraform
+    - ./modules/*/.infracost
