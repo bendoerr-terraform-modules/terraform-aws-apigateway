@@ -1,11 +1,13 @@
 package test_test
 
 import (
-	"context"
-	"fmt"
+	"encoding/json"
+	"io"
+	"net/http"
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/gruntwork-io/terratest/modules/random"
 
@@ -42,7 +44,7 @@ func TestDefaults(t *testing.T) {
 
 	// AWS Session
 	_, err := config.LoadDefaultConfig(
-		context.Background(),
+		t.Context(),
 		config.WithRegion("us-east-1"),
 	)
 
@@ -50,17 +52,44 @@ func TestDefaults(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// Force makediff usage
-	_ = makediff("example", "example")
-}
+	// Get the API Gateway endpoint URL from the Terraform outputs
+	apiURL := terraform.Output(t, terraformOptions, "api_invoke_url")
+	t.Logf("API Gateway URL: %s", apiURL)
 
-func makediff(want interface{}, got interface{}) string {
-	s := fmt.Sprintf("\nwant: %# v", pretty.Formatter(want))
-	s = fmt.Sprintf("%s\ngot: %# v", s, pretty.Formatter(got))
-	diffs := pretty.Diff(want, got)
-	s += "\ndifferences: "
-	for _, d := range diffs {
-		s = fmt.Sprintf("%s\n  - %s", s, d)
+	// Test the API Gateway endpoint
+	client := &http.Client{
+		Timeout: time.Second * 30,
 	}
-	return s
+
+	resp, err := client.Get(apiURL)
+	if err != nil {
+		t.Fatalf("Failed to make request to API Gateway: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, resp.StatusCode)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("Failed to read response body: %v", err)
+	}
+
+	// Parse response JSON
+	var responseData map[string]interface{}
+	if err := json.Unmarshal(body, &responseData); err != nil {
+		t.Fatalf("Failed to parse response JSON: %v", err)
+	}
+
+	t.Logf("Response from API Gateway: %v", responseData)
+
+	// Validate the response message from the Lambda handler
+	if message, ok := responseData["message"]; !ok {
+		t.Errorf("Response missing 'message' field")
+	} else if messageStr, ok := message.(string); !ok {
+		t.Errorf("'message' field is not a string: %v", message)
+	} else if messageStr != "Hello from Lambda!" {
+		t.Errorf("Expected message 'Hello from Lambda!', got '%s'", messageStr)
+	}
 }

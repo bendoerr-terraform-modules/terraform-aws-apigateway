@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+terraform-docs markdown     \
+    --output-file README.md \
+    --hide-empty            \
+    --indent 3              \
+    .

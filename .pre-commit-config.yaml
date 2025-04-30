@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: 2c9f875913ee60ca25ce70243dc24d5b6415598c # frozen: v4.6.0
+    rev: cef0300fd0fc4d2a87a85fa2093c6b283ea36f4b # frozen: v5.0.0
     hooks:
       - id: check-added-large-files
       - id: check-case-conflict
@@ -14,12 +14,12 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/gitleaks/gitleaks
-    rev: 77c3c6a34b2577d71083442326c60b8fd58926ec # frozen: v8.18.4
+    rev: a2a447c39b8e87ea803c140b4c58a2b9804e42f8 # frozen: v8.25.1
     hooks:
       - id: gitleaks
 
   - repo: https://github.com/gruntwork-io/pre-commit
-    rev: d9196b3a0a6fbc530f2bacea36c11a3b0214ff13 # frozen: v0.1.28
+    rev: 59fd8610ae21aaf8234f1ef17d43c3ccdee84d16 # frozen: v0.1.29
     hooks:
       - id: terraform-fmt
       - id: terraform-validate
@@ -27,7 +27,7 @@ repos:
       - id: shellcheck
 
   - repo: https://github.com/mxab/pre-commit-trivy.git
-    rev: 8bf32a5e81aa824af2cb56762c6fdee59f52c534 # frozen: v0.12.0
+    rev: a804ee07a4c0c0793d3698a8936dea8d79116614 # frozen: v0.15.0
     hooks:
       - id: trivyfs-docker
         args: ["."]
@@ -42,12 +42,12 @@ repos:
           - markdown
 
   - repo: https://github.com/executablebooks/mdformat
-    rev: 08fba30538869a440b5059de90af03e3502e35fb # frozen: 0.7.17
+    rev: ff29be1a1ba8029d9375882aa2c812b62112a593 # frozen: 0.7.22
     hooks:
       - id: mdformat
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: f295829140d25717bc79368d3f966fc1f67a824f # frozen: v0.41.0
+    rev: 586c3ea3f51230da42bab657c6a32e9e66c364f0 # frozen: v0.44.0
     hooks:
       - id: markdownlint-fix-docker
 
@@ -67,7 +67,7 @@ repos:
   #          ]
 
   - repo: https://github.com/golangci/golangci-lint
-    rev: c2e095c022a97360f7fff5d49fbc11f273be929a # frozen: v1.60.3
+    rev: 8c14421d29bd005dee63044d07aa897b7d1bf8b0 # frozen: v2.1.5
     hooks:
       - id: golangci-lint-full
         entry: bash -c 'cd test && golangci-lint run --fix'
