@@ -7,7 +7,7 @@ module "label" {
 
 module "oidc_authorizer_lambda" {
   source  = "bendoerr-terraform-modules/lambda/aws"
-  version = "0.1.2"
+  version = "0.2.0"
 
   context = var.context
   name    = var.name

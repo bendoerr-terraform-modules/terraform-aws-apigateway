@@ -45,7 +45,7 @@ module "oidc_authorizer" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement_terraform) | >= 1.0.0 |
-| <a name="requirement_aws"></a> [aws](#requirement_aws) | ~> 5.0 |
+| <a name="requirement_aws"></a> [aws](#requirement_aws) | ~> 6.0 |
 | <a name="requirement_github"></a> [github](#requirement_github) | ~> 6.0 |
 | <a name="requirement_http"></a> [http](#requirement_http) | ~> 3.0 |
 | <a name="requirement_local"></a> [local](#requirement_local) | 2.5.2 |

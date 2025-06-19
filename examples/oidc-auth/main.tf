@@ -116,7 +116,7 @@ module "label" {
 # Public Lambda function (no authorization)
 module "lambda_public" {
   source  = "bendoerr-terraform-modules/lambda/aws"
-  version = "0.1.2"
+  version = "0.2.0"
 
   context     = module.context
   name        = "${module.label.id}-public"
@@ -131,7 +131,7 @@ module "lambda_public" {
 # Protected Lambda function (requires authorization)
 module "lambda_protected" {
   source  = "bendoerr-terraform-modules/lambda/aws"
-  version = "0.1.2"
+  version = "0.2.0"
 
   context     = module.context
   name        = "${module.label.id}-protected"
