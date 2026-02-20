@@ -7,7 +7,7 @@
     </picture>
   </a>
 
-<h3 align="center">Ben's Terraform Module Template Repo</h3>
+<h3 align="center">Ben's Terraform AWS API Gateway Module</h3>
 
 <p align="center">
     This is how I do it.
@@ -92,48 +92,80 @@ module "api_gateway" {
 ```
 
 <!-- BEGIN_TF_DOCS -->
-
 ### Requirements
 
 | Name | Version |
-| ------------------------------------------------------------------------ | -------- |
-| <a name="requirement_terraform"></a> [terraform](#requirement_terraform) | >= 1.0.0 |
-| <a name="requirement_aws"></a> [aws](#requirement_aws) | ~> 6.0 |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 
 ### Providers
 
 | Name | Version |
-| ------------------------------------------------ | ------- |
-| <a name="provider_aws"></a> [aws](#provider_aws) | 5.64.0 |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.0 |
 
 ### Modules
 
 | Name | Source | Version |
-| -------------------------------------------------- | ------------------------------------- | ------- |
-| <a name="module_label"></a> [label](#module_label) | bendoerr-terraform-modules/label/null | 0.4.2 |
+|------|--------|---------|
+| <a name="module_label"></a> [label](#module\_label) | bendoerr-terraform-modules/label/null | 0.5.0 |
 
 ### Resources
 
 | Name | Type |
-| -------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| [aws_caller_identity.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+|------|------|
+| [aws_api_gateway_deployment.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_deployment) | resource |
+| [aws_api_gateway_method_settings.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_method_settings) | resource |
+| [aws_api_gateway_rest_api.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_rest_api) | resource |
+| [aws_api_gateway_stage.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_stage) | resource |
+| [aws_cloudwatch_log_group.api_gateway_access_logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
+| [aws_cloudwatch_log_group.api_gateway_execution_logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
 
 ### Inputs
 
 | Name | Description | Type | Default | Required |
-| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | :------: |
-| <a name="input_context"></a> [context](#input_context) | Shared context from the 'bendoerr-terraform-modules/terraform-null-context' module. | <pre>object({<br> attributes = list(string)<br> dns_namespace = string<br> environment = string<br> instance = string<br> instance_short = string<br> namespace = string<br> region = string<br> region_short = string<br> role = string<br> role_short = string<br> project = string<br> tags = map(string)<br> })</pre> | n/a | yes |
-| <a name="input_name"></a> [name](#input_name) | A descriptive but short name used for labels by the 'bendoerr-terraform-modules/terraform-null-label' module. | `string` | `"thing"` | no |
+|------|-------------|------|---------|:--------:|
+| <a name="input_access_log_enabled"></a> [access\_log\_enabled](#input\_access\_log\_enabled) | Whether to enable access logging for the API Gateway stage | `bool` | `true` | no |
+| <a name="input_access_log_format"></a> [access\_log\_format](#input\_access\_log\_format) | Format of the access logs for the API Gateway stage | `string` | `"{\n  \"requestId\":\"$context.requestId\",\n  \"ip\":\"$context.identity.sourceIp\",\n  \"requestTime\":\"$context.requestTime\",\n  \"httpMethod\":\"$context.httpMethod\",\n  \"routeKey\":\"$context.routeKey\",\n  \"status\":\"$context.status\",\n  \"protocol\":\"$context.protocol\",\n  \"responseLength\":\"$context.responseLength\",\n  \"integrationError\":\"$context.integrationErrorMessage\",\n  \"authorizerError\":\"$context.authorizer.error\"\n}\n"` | no |
+| <a name="input_access_log_retention_in_days"></a> [access\_log\_retention\_in\_days](#input\_access\_log\_retention\_in\_days) | Number of days to retain API Gateway access logs | `number` | `7` | no |
+| <a name="input_cache_cluster_enabled"></a> [cache\_cluster\_enabled](#input\_cache\_cluster\_enabled) | Whether a cache cluster is enabled for the stage | `bool` | `false` | no |
+| <a name="input_cache_cluster_size"></a> [cache\_cluster\_size](#input\_cache\_cluster\_size) | Size of the cache cluster for the stage, if enabled. Allowed values include 0.5, 1.6, 6.1, 13.5, 28.4, 58.2, 118, 237 | `string` | `"0.5"` | no |
+| <a name="input_context"></a> [context](#input\_context) | Shared context from the 'bendoerr-terraform-modules/terraform-null-context' module. | <pre>object({<br>    attributes     = list(string)<br>    dns_namespace  = string<br>    environment    = string<br>    instance       = string<br>    instance_short = string<br>    namespace      = string<br>    region         = string<br>    region_short   = string<br>    role           = string<br>    role_short     = string<br>    project        = string<br>    tags           = map(string)<br>  })</pre> | n/a | yes |
+| <a name="input_description"></a> [description](#input\_description) | Description of the API Gateway REST API | `string` | `null` | no |
+| <a name="input_endpoint_configuration"></a> [endpoint\_configuration](#input\_endpoint\_configuration) | Configuration block defining API endpoint configuration including endpoint type and VPC endpoint IDs | <pre>object({<br>    types            = list(string)<br>    vpc_endpoint_ids = optional(list(string))<br>  })</pre> | <pre>{<br>  "types": [<br>    "EDGE"<br>  ]<br>}</pre> | no |
+| <a name="input_execution_log_retention_in_days"></a> [execution\_log\_retention\_in\_days](#input\_execution\_log\_retention\_in\_days) | Number of days to retain API Gateway execution logs | `number` | `7` | no |
+| <a name="input_method_settings"></a> [method\_settings](#input\_method\_settings) | Map of method paths to their settings. Each key is a method path (format: resource\_path/http\_method, where * can be used as a wildcard), and each value is a map of settings. An empty map disables method settings. | <pre>map(object({<br>    logging_level                              = optional(string, "INFO")<br>    data_trace_enabled                         = optional(bool, false)<br>    metrics_enabled                            = optional(bool, true)<br>    throttling_burst_limit                     = optional(number, 5000)<br>    throttling_rate_limit                      = optional(number, 10000)<br>    caching_enabled                            = optional(bool, false)<br>    cache_ttl_in_seconds                       = optional(number, 300)<br>    cache_data_encrypted                       = optional(bool, true)<br>    require_authorization_for_cache_control    = optional(bool, true)<br>    unauthorized_cache_control_header_strategy = optional(string, "SUCCEED_WITH_RESPONSE_HEADER")<br>  }))</pre> | <pre>{<br>  "*/*": {<br>    "cache_data_encrypted": true,<br>    "cache_ttl_in_seconds": 300,<br>    "caching_enabled": false,<br>    "data_trace_enabled": false,<br>    "logging_level": "INFO",<br>    "metrics_enabled": true,<br>    "require_authorization_for_cache_control": true,<br>    "throttling_burst_limit": 5000,<br>    "throttling_rate_limit": 10000,<br>    "unauthorized_cache_control_header_strategy": "SUCCEED_WITH_RESPONSE_HEADER"<br>  }<br>}</pre> | no |
+| <a name="input_name"></a> [name](#input\_name) | A descriptive but short name used for labels by the 'bendoerr-terraform-modules/terraform-null-label' module. | `string` | `"thing"` | no |
+| <a name="input_openapi_config"></a> [openapi\_config](#input\_openapi\_config) | JSON or YAML string that defines the API using OpenAPI specification | `string` | `null` | no |
+| <a name="input_stage_description"></a> [stage\_description](#input\_stage\_description) | Description of the API Gateway stage | `string` | `null` | no |
+| <a name="input_stage_name"></a> [stage\_name](#input\_stage\_name) | Name of the stage for API Gateway deployment | `string` | `"api"` | no |
+| <a name="input_stage_variables"></a> [stage\_variables](#input\_stage\_variables) | Map of stage variables to be used in the API Gateway stage | `map(string)` | `{}` | no |
+| <a name="input_xray_tracing_enabled"></a> [xray\_tracing\_enabled](#input\_xray\_tracing\_enabled) | Whether active tracing with X-ray is enabled for the stage | `bool` | `false` | no |
 
 ### Outputs
 
 | Name | Description |
-| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| <a name="output_caller_identity"></a> [caller_identity](#output_caller_identity) | This can be removed if it is not needed |
-| <a name="output_id"></a> [id](#output_id) | The normalized ID from the 'bendoerr-terraform-modules/terraform-null-label' module. |
-| <a name="output_name"></a> [name](#output_name) | The provided name given to the module. |
-| <a name="output_tags"></a> [tags](#output_tags) | The normalized tags from the 'bendoerr-terraform-modules/terraform-null-label' module. |
-
+|------|-------------|
+| <a name="output_cloudwatch_log_group_arn"></a> [cloudwatch\_log\_group\_arn](#output\_cloudwatch\_log\_group\_arn) | ARN of the CloudWatch log group for API Gateway access logs |
+| <a name="output_cloudwatch_log_group_name"></a> [cloudwatch\_log\_group\_name](#output\_cloudwatch\_log\_group\_name) | Name of the CloudWatch log group for API Gateway access logs |
+| <a name="output_deployment_id"></a> [deployment\_id](#output\_deployment\_id) | ID of the API Gateway deployment |
+| <a name="output_execution_log_group_arn"></a> [execution\_log\_group\_arn](#output\_execution\_log\_group\_arn) | ARN of the CloudWatch log group for API Gateway execution logs |
+| <a name="output_execution_log_group_name"></a> [execution\_log\_group\_name](#output\_execution\_log\_group\_name) | Name of the CloudWatch log group for API Gateway execution logs |
+| <a name="output_id"></a> [id](#output\_id) | The normalized ID from the 'bendoerr-terraform-modules/terraform-null-label' module. |
+| <a name="output_method_settings_id"></a> [method\_settings\_id](#output\_method\_settings\_id) | IDs of the API Gateway method settings |
+| <a name="output_name"></a> [name](#output\_name) | The provided name given to the module. |
+| <a name="output_rest_api_arn"></a> [rest\_api\_arn](#output\_rest\_api\_arn) | ARN of the REST API |
+| <a name="output_rest_api_execution_arn"></a> [rest\_api\_execution\_arn](#output\_rest\_api\_execution\_arn) | Execution ARN part to be used in lambda\_permission's source\_arn |
+| <a name="output_rest_api_id"></a> [rest\_api\_id](#output\_rest\_api\_id) | ID of the REST API |
+| <a name="output_rest_api_name"></a> [rest\_api\_name](#output\_rest\_api\_name) | Name of the REST API |
+| <a name="output_rest_api_root_resource_id"></a> [rest\_api\_root\_resource\_id](#output\_rest\_api\_root\_resource\_id) | Resource ID of the REST API's root |
+| <a name="output_stage_arn"></a> [stage\_arn](#output\_stage\_arn) | ARN of the API Gateway stage |
+| <a name="output_stage_execution_arn"></a> [stage\_execution\_arn](#output\_stage\_execution\_arn) | Execution ARN to be used in permissions policy |
+| <a name="output_stage_id"></a> [stage\_id](#output\_stage\_id) | ID of the API Gateway stage |
+| <a name="output_stage_invoke_url"></a> [stage\_invoke\_url](#output\_stage\_invoke\_url) | URL to invoke the API pointing to the stage |
+| <a name="output_stage_name"></a> [stage\_name](#output\_stage\_name) | Name of the API Gateway stage |
+| <a name="output_tags"></a> [tags](#output\_tags) | The normalized tags from the 'bendoerr-terraform-modules/terraform-null-label' module. |
 <!-- END_TF_DOCS -->
 
 ## Roadmap
