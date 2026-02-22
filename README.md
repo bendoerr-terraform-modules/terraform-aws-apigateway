@@ -62,16 +62,23 @@ module "api_gateway" {
     # ... rest of OpenAPI spec ...
   })
 
-  # API Gateway configuration
-  stage_name        = "v1"
-  stage_description = "Version 1"
+  # Stage configuration (all attributes optional with sensible defaults)
+  stage_config = {
+    name        = "v1"
+    description = "Version 1"
+  }
 
-  # Enable access logs with CloudWatch
-  access_log_enabled             = true
-  access_log_retention_in_days   = 14
-  execution_log_retention_in_days = 14
+  # Logging configuration (all attributes optional)
+  logging_config = {
+    access_logs = {
+      retention_in_days = 14
+    }
+    execution_logs = {
+      retention_in_days = 14
+    }
+  }
 
-  # Method settings
+  # Method settings (object attributes are optional with defaults)
   method_settings = {
     "*/*" = {
       logging_level   = "INFO"
@@ -120,22 +127,14 @@ module "api_gateway" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_access_log_enabled"></a> [access\_log\_enabled](#input\_access\_log\_enabled) | Whether to enable access logging for the API Gateway stage | `bool` | `true` | no |
-| <a name="input_access_log_format"></a> [access\_log\_format](#input\_access\_log\_format) | Format of the access logs for the API Gateway stage | `string` | `"{\n  \"requestId\":\"$context.requestId\",\n  \"ip\":\"$context.identity.sourceIp\",\n  \"requestTime\":\"$context.requestTime\",\n  \"httpMethod\":\"$context.httpMethod\",\n  "resourcePath":"$context.resourcePath",\n  \"status\":\"$context.status\",\n  \"protocol\":\"$context.protocol\",\n  \"responseLength\":\"$context.responseLength\",\n  \"integrationError\":\"$context.integrationErrorMessage\",\n  \"authorizerError\":\"$context.authorizer.error\"\n}\n"` | no |
-| <a name="input_access_log_retention_in_days"></a> [access\_log\_retention\_in\_days](#input\_access\_log\_retention\_in\_days) | Number of days to retain API Gateway access logs | `number` | `7` | no |
-| <a name="input_cache_cluster_enabled"></a> [cache\_cluster\_enabled](#input\_cache\_cluster\_enabled) | Whether a cache cluster is enabled for the stage | `bool` | `false` | no |
-| <a name="input_cache_cluster_size"></a> [cache\_cluster\_size](#input\_cache\_cluster\_size) | Size of the cache cluster for the stage, if enabled. Allowed values include 0.5, 1.6, 6.1, 13.5, 28.4, 58.2, 118, 237 | `string` | `"0.5"` | no |
 | <a name="input_context"></a> [context](#input\_context) | Shared context from the 'bendoerr-terraform-modules/terraform-null-context' module. | <pre>object({<br>    attributes     = list(string)<br>    dns_namespace  = string<br>    environment    = string<br>    instance       = string<br>    instance_short = string<br>    namespace      = string<br>    region         = string<br>    region_short   = string<br>    role           = string<br>    role_short     = string<br>    project        = string<br>    tags           = map(string)<br>  })</pre> | n/a | yes |
 | <a name="input_description"></a> [description](#input\_description) | Description of the API Gateway REST API | `string` | `null` | no |
 | <a name="input_endpoint_configuration"></a> [endpoint\_configuration](#input\_endpoint\_configuration) | Configuration block defining API endpoint configuration including endpoint type and VPC endpoint IDs | <pre>object({<br>    types            = list(string)<br>    vpc_endpoint_ids = optional(list(string))<br>  })</pre> | <pre>{<br>  "types": [<br>    "EDGE"<br>  ]<br>}</pre> | no |
-| <a name="input_execution_log_retention_in_days"></a> [execution\_log\_retention\_in\_days](#input\_execution\_log\_retention\_in\_days) | Number of days to retain API Gateway execution logs | `number` | `7` | no |
+| <a name="input_logging_config"></a> [logging\_config](#input\_logging\_config) | CloudWatch logging configuration for API Gateway access and execution logs. | <pre>object({<br>    access_logs = optional(object({<br>      enabled           = optional(bool, true)<br>      format            = optional(string)<br>      retention_in_days = optional(number, 7)<br>    }), {})<br>    execution_logs = optional(object({<br>      retention_in_days = optional(number, 7)<br>    }), {})<br>  })</pre> | `{}` | no |
 | <a name="input_method_settings"></a> [method\_settings](#input\_method\_settings) | Map of method paths to their settings. Each key is a method path (format: resource\_path/http\_method, where * can be used as a wildcard), and each value is a map of settings. An empty map disables method settings. | <pre>map(object({<br>    logging_level                              = optional(string, "INFO")<br>    data_trace_enabled                         = optional(bool, false)<br>    metrics_enabled                            = optional(bool, true)<br>    throttling_burst_limit                     = optional(number, 5000)<br>    throttling_rate_limit                      = optional(number, 10000)<br>    caching_enabled                            = optional(bool, false)<br>    cache_ttl_in_seconds                       = optional(number, 300)<br>    cache_data_encrypted                       = optional(bool, true)<br>    require_authorization_for_cache_control    = optional(bool, true)<br>    unauthorized_cache_control_header_strategy = optional(string, "SUCCEED_WITH_RESPONSE_HEADER")<br>  }))</pre> | <pre>{<br>  "*/*": {<br>    "cache_data_encrypted": true,<br>    "cache_ttl_in_seconds": 300,<br>    "caching_enabled": false,<br>    "data_trace_enabled": false,<br>    "logging_level": "INFO",<br>    "metrics_enabled": true,<br>    "require_authorization_for_cache_control": true,<br>    "throttling_burst_limit": 5000,<br>    "throttling_rate_limit": 10000,<br>    "unauthorized_cache_control_header_strategy": "SUCCEED_WITH_RESPONSE_HEADER"<br>  }<br>}</pre> | no |
 | <a name="input_name"></a> [name](#input\_name) | A descriptive but short name used for labels by the 'bendoerr-terraform-modules/terraform-null-label' module. | `string` | `"thing"` | no |
 | <a name="input_openapi_config"></a> [openapi\_config](#input\_openapi\_config) | JSON or YAML string that defines the API using OpenAPI specification | `string` | `null` | no |
-| <a name="input_stage_description"></a> [stage\_description](#input\_stage\_description) | Description of the API Gateway stage | `string` | `null` | no |
-| <a name="input_stage_name"></a> [stage\_name](#input\_stage\_name) | Name of the stage for API Gateway deployment | `string` | `"api"` | no |
-| <a name="input_stage_variables"></a> [stage\_variables](#input\_stage\_variables) | Map of stage variables to be used in the API Gateway stage | `map(string)` | `{}` | no |
-| <a name="input_xray_tracing_enabled"></a> [xray\_tracing\_enabled](#input\_xray\_tracing\_enabled) | Whether active tracing with X-ray is enabled for the stage | `bool` | `false` | no |
+| <a name="input_stage_config"></a> [stage\_config](#input\_stage\_config) | API Gateway stage configuration including caching and tracing settings. | <pre>object({<br>    name                 = optional(string, "api")<br>    description          = optional(string)<br>    variables            = optional(map(string), {})<br>    xray_tracing_enabled = optional(bool, false)<br>    cache_cluster = optional(object({<br>      enabled = optional(bool, false)<br>      size    = optional(string, "0.5")<br>    }), {})<br>  })</pre> | `{}` | no |
 
 ### Outputs
 

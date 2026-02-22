@@ -46,76 +46,33 @@ variable "endpoint_configuration" {
   }
 }
 
-variable "stage_name" {
-  type        = string
-  description = "Name of the stage for API Gateway deployment"
-  default     = "api"
+variable "stage_config" {
+  type = object({
+    name                 = optional(string, "api")
+    description          = optional(string)
+    variables            = optional(map(string), {})
+    xray_tracing_enabled = optional(bool, false)
+    cache_cluster = optional(object({
+      enabled = optional(bool, false)
+      size    = optional(string, "0.5")
+    }), {})
+  })
+  description = "API Gateway stage configuration including caching and tracing settings."
+  default     = {}
 }
 
-variable "stage_description" {
-  type        = string
-  description = "Description of the API Gateway stage"
-  default     = null
-}
-
-variable "cache_cluster_enabled" {
-  type        = bool
-  description = "Whether a cache cluster is enabled for the stage"
-  default     = false
-}
-
-variable "cache_cluster_size" {
-  type        = string
-  description = "Size of the cache cluster for the stage, if enabled. Allowed values include 0.5, 1.6, 6.1, 13.5, 28.4, 58.2, 118, 237"
-  default     = "0.5"
-}
-
-variable "xray_tracing_enabled" {
-  type        = bool
-  description = "Whether active tracing with X-ray is enabled for the stage"
-  default     = false
-}
-
-variable "access_log_enabled" {
-  type        = bool
-  description = "Whether to enable access logging for the API Gateway stage"
-  default     = true
-}
-
-variable "access_log_format" {
-  type        = string
-  description = "Format of the access logs for the API Gateway stage"
-  default     = <<EOF
-{
-  "requestId":"$context.requestId",
-  "ip":"$context.identity.sourceIp",
-  "requestTime":"$context.requestTime",
-  "httpMethod":"$context.httpMethod",
-  "resourcePath":"$context.resourcePath",
-  "status":"$context.status",
-  "protocol":"$context.protocol",
-  "responseLength":"$context.responseLength",
-  "integrationError":"$context.integrationErrorMessage",
-  "authorizerError":"$context.authorizer.error"
-}
-EOF
-}
-
-variable "access_log_retention_in_days" {
-  type        = number
-  description = "Number of days to retain API Gateway access logs"
-  default     = 7
-}
-
-variable "execution_log_retention_in_days" {
-  type        = number
-  description = "Number of days to retain API Gateway execution logs"
-  default     = 7
-}
-
-variable "stage_variables" {
-  type        = map(string)
-  description = "Map of stage variables to be used in the API Gateway stage"
+variable "logging_config" {
+  type = object({
+    access_logs = optional(object({
+      enabled           = optional(bool, true)
+      format            = optional(string)
+      retention_in_days = optional(number, 7)
+    }), {})
+    execution_logs = optional(object({
+      retention_in_days = optional(number, 7)
+    }), {})
+  })
+  description = "CloudWatch logging configuration for API Gateway access and execution logs."
   default     = {}
 }
 
