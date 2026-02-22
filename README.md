@@ -46,7 +46,7 @@ provides the production-grade controls needed for modern APIs.
 
 ```hcl
 module "api_gateway" {
-  source = "bendoerr-terraform-modules/api-gateway/aws"
+  source = "bendoerr-terraform-modules/apigateway/aws"
 
   context     = module.context
   name        = "example-api"
@@ -67,17 +67,11 @@ module "api_gateway" {
   stage_description = "Version 1"
 
   # Enable access logs with CloudWatch
-  access_log_enabled = true
-  log_retention_days = 14
+  access_log_enabled             = true
+  access_log_retention_in_days   = 14
+  execution_log_retention_in_days = 14
 
-  # Method settings - single path approach (legacy)
-  method_settings_enabled = true
-  logging_level           = "INFO"
-  metrics_enabled         = true
-
-  # OR
-
-  # Method settings - multiple paths approach (recommended)
+  # Method settings
   method_settings = {
     "*/*" = {
       logging_level   = "INFO"
