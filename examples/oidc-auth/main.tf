@@ -68,12 +68,18 @@ module "api_gateway" {
     }
   })
 
-  # API Gateway configuration
-  stage_name        = "v1"
-  stage_description = "Version 1"
+  # Stage configuration (grouped)
+  stage_config = {
+    name        = "v1"
+    description = "Version 1"
+  }
 
-  # Enable logs
-  access_log_enabled = true
+  # Logging configuration (grouped)
+  logging_config = {
+    access_logs = {
+      enabled = true
+    }
+  }
 }
 
 # Account settings for CloudWatch logs

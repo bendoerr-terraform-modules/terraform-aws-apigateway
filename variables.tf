@@ -46,77 +46,108 @@ variable "endpoint_configuration" {
   }
 }
 
+#
+# Stage Configuration (grouped)
+#
+
+variable "stage_config" {
+  type = object({
+    name        = optional(string, "api")
+    description = optional(string)
+    variables   = optional(map(string), {})
+    cache_cluster = optional(object({
+      enabled = optional(bool, false)
+      size    = optional(string, "0.5")
+    }), {})
+    xray_tracing_enabled = optional(bool, false)
+  })
+  description = "API Gateway stage configuration including caching and tracing settings. Replaces the individual stage_name, stage_description, cache_cluster_enabled, cache_cluster_size, xray_tracing_enabled, and stage_variables variables."
+  default     = {}
+}
+
+#
+# Logging Configuration (grouped)
+#
+
+variable "logging_config" {
+  type = object({
+    access_logs = optional(object({
+      enabled           = optional(bool, true)
+      format            = optional(string)
+      retention_in_days = optional(number, 7)
+    }), {})
+    execution_logs = optional(object({
+      retention_in_days = optional(number, 7)
+    }), {})
+  })
+  description = "CloudWatch logging configuration for API Gateway access and execution logs. Replaces the individual access_log_enabled, access_log_format, access_log_retention_in_days, and execution_log_retention_in_days variables."
+  default     = {}
+}
+
+#
+# Deprecated variables - kept for backward compatibility
+# These will be removed in the next major version.
+# Use stage_config and logging_config instead.
+#
+
 variable "stage_name" {
   type        = string
-  description = "Name of the stage for API Gateway deployment"
-  default     = "api"
+  description = "DEPRECATED: Use stage_config.name instead. Name of the stage for API Gateway deployment."
+  default     = null
 }
 
 variable "stage_description" {
   type        = string
-  description = "Description of the API Gateway stage"
+  description = "DEPRECATED: Use stage_config.description instead. Description of the API Gateway stage."
   default     = null
 }
 
 variable "cache_cluster_enabled" {
   type        = bool
-  description = "Whether a cache cluster is enabled for the stage"
-  default     = false
+  description = "DEPRECATED: Use stage_config.cache_cluster.enabled instead. Whether a cache cluster is enabled for the stage."
+  default     = null
 }
 
 variable "cache_cluster_size" {
   type        = string
-  description = "Size of the cache cluster for the stage, if enabled. Allowed values include 0.5, 1.6, 6.1, 13.5, 28.4, 58.2, 118, 237"
-  default     = "0.5"
+  description = "DEPRECATED: Use stage_config.cache_cluster.size instead. Size of the cache cluster for the stage."
+  default     = null
 }
 
 variable "xray_tracing_enabled" {
   type        = bool
-  description = "Whether active tracing with X-ray is enabled for the stage"
-  default     = false
+  description = "DEPRECATED: Use stage_config.xray_tracing_enabled instead. Whether active tracing with X-ray is enabled for the stage."
+  default     = null
 }
 
 variable "access_log_enabled" {
   type        = bool
-  description = "Whether to enable access logging for the API Gateway stage"
-  default     = true
+  description = "DEPRECATED: Use logging_config.access_logs.enabled instead. Whether to enable access logging."
+  default     = null
 }
 
 variable "access_log_format" {
   type        = string
-  description = "Format of the access logs for the API Gateway stage"
-  default     = <<EOF
-{
-  "requestId":"$context.requestId",
-  "ip":"$context.identity.sourceIp",
-  "requestTime":"$context.requestTime",
-  "httpMethod":"$context.httpMethod",
-  "resourcePath":"$context.resourcePath",
-  "status":"$context.status",
-  "protocol":"$context.protocol",
-  "responseLength":"$context.responseLength",
-  "integrationError":"$context.integrationErrorMessage",
-  "authorizerError":"$context.authorizer.error"
-}
-EOF
+  description = "DEPRECATED: Use logging_config.access_logs.format instead. Format of the access logs."
+  default     = null
 }
 
 variable "access_log_retention_in_days" {
   type        = number
-  description = "Number of days to retain API Gateway access logs"
-  default     = 7
+  description = "DEPRECATED: Use logging_config.access_logs.retention_in_days instead. Number of days to retain access logs."
+  default     = null
 }
 
 variable "execution_log_retention_in_days" {
   type        = number
-  description = "Number of days to retain API Gateway execution logs"
-  default     = 7
+  description = "DEPRECATED: Use logging_config.execution_logs.retention_in_days instead. Number of days to retain execution logs."
+  default     = null
 }
 
 variable "stage_variables" {
   type        = map(string)
-  description = "Map of stage variables to be used in the API Gateway stage"
-  default     = {}
+  description = "DEPRECATED: Use stage_config.variables instead. Map of stage variables."
+  default     = null
 }
 
 variable "method_settings" {
