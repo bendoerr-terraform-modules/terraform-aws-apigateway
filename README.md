@@ -92,6 +92,25 @@ module "api_gateway" {
 }
 ```
 
+## Upgrading
+
+### v0.x → v1.0 (Breaking Change)
+
+Individual stage and logging variables have been consolidated into `stage_config` and `logging_config` objects:
+
+| Old Variable | New Path |
+|---|---|
+| `stage_name` | `stage_config.name` |
+| `stage_description` | `stage_config.description` |
+| `cache_cluster_enabled` | `stage_config.cache_cluster.enabled` |
+| `cache_cluster_size` | `stage_config.cache_cluster.size` |
+| `xray_tracing_enabled` | `stage_config.xray_tracing_enabled` |
+| `stage_variables` | `stage_config.variables` |
+| `access_log_enabled` | `logging_config.access_logs.enabled` |
+| `access_log_format` | `logging_config.access_logs.format` |
+| `access_log_retention_in_days` | `logging_config.access_logs.retention_in_days` |
+| `execution_log_retention_in_days` | `logging_config.execution_logs.retention_in_days` |
+
 <!-- BEGIN_TF_DOCS -->
 ### Requirements
 

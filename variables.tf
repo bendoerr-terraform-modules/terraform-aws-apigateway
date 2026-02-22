@@ -59,6 +59,15 @@ variable "stage_config" {
   })
   description = "API Gateway stage configuration including caching and tracing settings."
   default     = {}
+  nullable    = false
+
+  validation {
+    condition = (
+      var.stage_config.cache_cluster == {} ||
+      contains(["0.5", "1.6", "6.1", "13.5", "28.4", "58.2", "118", "237"], try(var.stage_config.cache_cluster.size, "0.5"))
+    )
+    error_message = "If cache_cluster is provided, size must be one of: 0.5, 1.6, 6.1, 13.5, 28.4, 58.2, 118, 237."
+  }
 }
 
 variable "logging_config" {
@@ -74,6 +83,7 @@ variable "logging_config" {
   })
   description = "CloudWatch logging configuration for API Gateway access and execution logs."
   default     = {}
+  nullable    = false
 }
 
 variable "method_settings" {
