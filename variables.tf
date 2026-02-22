@@ -62,10 +62,7 @@ variable "stage_config" {
   nullable    = false
 
   validation {
-    condition = (
-      var.stage_config.cache_cluster == {} ||
-      contains(["0.5", "1.6", "6.1", "13.5", "28.4", "58.2", "118", "237"], try(var.stage_config.cache_cluster.size, "0.5"))
-    )
+    condition     = contains(["0.5", "1.6", "6.1", "13.5", "28.4", "58.2", "118", "237"], try(var.stage_config.cache_cluster.size, "0.5"))
     error_message = "If cache_cluster is provided, size must be one of: 0.5, 1.6, 6.1, 13.5, 28.4, 58.2, 118, 237."
   }
 }
