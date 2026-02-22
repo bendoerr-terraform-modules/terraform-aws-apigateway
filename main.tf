@@ -34,31 +34,31 @@ resource "aws_api_gateway_deployment" "this" {
 }
 
 resource "aws_cloudwatch_log_group" "api_gateway_access_logs" {
-  count             = var.access_log_enabled ? 1 : 0
+  count             = local.access_log_enabled ? 1 : 0
   name              = "/aws/apigateway/${module.label.id}-access-logs"
   tags              = module.label.tags
-  retention_in_days = var.access_log_retention_in_days
+  retention_in_days = var.logging_config.access_logs.retention_in_days
 }
 
 resource "aws_api_gateway_stage" "this" {
   deployment_id = aws_api_gateway_deployment.this.id
   rest_api_id   = aws_api_gateway_rest_api.this.id
-  stage_name    = var.stage_name
-  description   = var.stage_description
+  stage_name    = var.stage_config.name
+  description   = var.stage_config.description
 
-  cache_cluster_enabled = var.cache_cluster_enabled
-  cache_cluster_size    = var.cache_cluster_enabled ? var.cache_cluster_size : null
-  xray_tracing_enabled  = var.xray_tracing_enabled
+  cache_cluster_enabled = var.stage_config.cache_cluster.enabled
+  cache_cluster_size    = var.stage_config.cache_cluster.enabled ? var.stage_config.cache_cluster.size : null
+  xray_tracing_enabled  = var.stage_config.xray_tracing_enabled
 
   dynamic "access_log_settings" {
-    for_each = var.access_log_enabled ? [1] : []
+    for_each = local.access_log_enabled ? [1] : []
     content {
       destination_arn = aws_cloudwatch_log_group.api_gateway_access_logs[0].arn
-      format          = replace(var.access_log_format, "\n", "")
+      format          = replace(local.access_log_format, "\n", "")
     }
   }
 
-  variables = var.stage_variables
+  variables = var.stage_config.variables
 
   tags = module.label.tags
 }
@@ -91,7 +91,7 @@ resource "aws_api_gateway_method_settings" "this" {
 
 # CloudWatch Log Group for API Gateway execution logs
 resource "aws_cloudwatch_log_group" "api_gateway_execution_logs" {
-  name              = "API-Gateway-Execution-Logs_${aws_api_gateway_rest_api.this.id}/${var.stage_name}"
-  retention_in_days = var.execution_log_retention_in_days
+  name              = "API-Gateway-Execution-Logs_${aws_api_gateway_rest_api.this.id}/${var.stage_config.name}"
+  retention_in_days = var.logging_config.execution_logs.retention_in_days
   tags              = module.label.tags
 }
