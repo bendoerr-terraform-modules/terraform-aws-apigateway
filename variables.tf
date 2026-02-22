@@ -91,7 +91,7 @@ variable "access_log_format" {
   "ip":"$context.identity.sourceIp",
   "requestTime":"$context.requestTime",
   "httpMethod":"$context.httpMethod",
-  "routeKey":"$context.routeKey",
+  "resourcePath":"$context.resourcePath",
   "status":"$context.status",
   "protocol":"$context.protocol",
   "responseLength":"$context.responseLength",

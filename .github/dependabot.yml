@@ -5,6 +5,8 @@ updates:
     directories:
       - "/"
       - "/examples/simple"
+      - "/examples/account-logs"
+      - "/examples/oidc-auth"
     schedule:
       interval: "weekly"
     groups:
