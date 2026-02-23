@@ -44,12 +44,14 @@ module "this" {
     }
   })
 
-  # API Gateway configuration
-  stage_name        = "v1"
-  stage_description = "Version 1"
+  # Stage configuration (grouped with optional attributes)
+  stage_config = {
+    name        = "v1"
+    description = "Version 1"
+  }
 
-  # Enable logs
-  access_log_enabled = true
+  # Logging configuration (uses defaults: access logs enabled, 7-day retention)
+  # logging_config = {} # Not needed — defaults are applied automatically
 }
 
 module "lambda" {

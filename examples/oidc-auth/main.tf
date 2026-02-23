@@ -68,12 +68,18 @@ module "api_gateway" {
     }
   })
 
-  # API Gateway configuration
-  stage_name        = "v1"
-  stage_description = "Version 1"
+  # Stage configuration
+  stage_config = {
+    name        = "v1"
+    description = "Version 1"
+  }
 
-  # Enable logs
-  access_log_enabled = true
+  # Logging configuration (defaults: access logs enabled, 7-day retention)
+  logging_config = {
+    access_logs = {
+      retention_in_days = 14
+    }
+  }
 }
 
 # Account settings for CloudWatch logs

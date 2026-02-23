@@ -70,12 +70,12 @@ output "stage_arn" {
 
 output "cloudwatch_log_group_name" {
   description = "Name of the CloudWatch log group for API Gateway access logs"
-  value       = var.access_log_enabled ? aws_cloudwatch_log_group.api_gateway_access_logs[0].name : null
+  value       = local.access_log_enabled ? aws_cloudwatch_log_group.api_gateway_access_logs[0].name : null
 }
 
 output "cloudwatch_log_group_arn" {
   description = "ARN of the CloudWatch log group for API Gateway access logs"
-  value       = var.access_log_enabled ? aws_cloudwatch_log_group.api_gateway_access_logs[0].arn : null
+  value       = local.access_log_enabled ? aws_cloudwatch_log_group.api_gateway_access_logs[0].arn : null
 }
 
 output "execution_log_group_name" {
