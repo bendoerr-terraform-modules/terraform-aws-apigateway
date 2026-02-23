@@ -92,6 +92,29 @@ module "api_gateway" {
 }
 ```
 
+
+## Version Constraints
+
+This module uses **pessimistic version constraints** (`~>`) for the AWS provider to ensure predictable behavior across deployments:
+
+```hcl
+required_providers {
+  aws = {
+    source  = "hashicorp/aws"
+    version = "~> 6.0"  # Allows 6.x, prevents 7.0
+  }
+}
+```
+
+**Why pessimistic constraints?**
+- Prevents unexpected breaking changes from major provider updates
+- Ensures consistent behavior across environments
+- Makes upgrade impact predictable and controllable
+
+**When AWS provider v7.0 releases**, this module will require an update to support it. This is intentional - we prefer explicit, tested upgrades over automatic major version bumps.
+
+For consuming this module, you can use any AWS provider version that satisfies both your requirements and this module's constraints. Terraform's dependency resolver will find a compatible version automatically.
+
 ## Upgrading
 
 ### v0.x → v1.0 (Breaking Change)
