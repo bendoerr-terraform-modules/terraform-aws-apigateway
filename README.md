@@ -92,26 +92,28 @@ module "api_gateway" {
 }
 ```
 
-
 ## Version Constraints
 
 This module uses **pessimistic version constraints** (`~>`) for the AWS provider to ensure predictable behavior across deployments:
 
 ```hcl
-required_providers {
-  aws = {
-    source  = "hashicorp/aws"
-    version = "~> 6.0"  # Allows 6.x, prevents 7.0
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.0" # Allows 6.x, prevents 7.0
+    }
   }
 }
 ```
 
 **Why pessimistic constraints?**
+
 - Prevents unexpected breaking changes from major provider updates
 - Ensures consistent behavior across environments
 - Makes upgrade impact predictable and controllable
 
-**When AWS provider v7.0 releases**, this module will require an update to support it. This is intentional - we prefer explicit, tested upgrades over automatic major version bumps.
+**When AWS provider v7.0 is released**, this module will require an update to support it. This is intentional - we prefer explicit, tested upgrades over automatic major version bumps.
 
 For consuming this module, you can use any AWS provider version that satisfies both your requirements and this module's constraints. Terraform's dependency resolver will find a compatible version automatically.
 
@@ -121,86 +123,88 @@ For consuming this module, you can use any AWS provider version that satisfies b
 
 Individual stage and logging variables have been consolidated into `stage_config` and `logging_config` objects:
 
-| Old Variable | New Path |
-|---|---|
-| `stage_name` | `stage_config.name` |
-| `stage_description` | `stage_config.description` |
-| `cache_cluster_enabled` | `stage_config.cache_cluster.enabled` |
-| `cache_cluster_size` | `stage_config.cache_cluster.size` |
-| `xray_tracing_enabled` | `stage_config.xray_tracing_enabled` |
-| `stage_variables` | `stage_config.variables` |
-| `access_log_enabled` | `logging_config.access_logs.enabled` |
-| `access_log_format` | `logging_config.access_logs.format` |
-| `access_log_retention_in_days` | `logging_config.access_logs.retention_in_days` |
+| Old Variable                      | New Path                                          |
+| --------------------------------- | ------------------------------------------------- |
+| `stage_name`                      | `stage_config.name`                               |
+| `stage_description`               | `stage_config.description`                        |
+| `cache_cluster_enabled`           | `stage_config.cache_cluster.enabled`              |
+| `cache_cluster_size`              | `stage_config.cache_cluster.size`                 |
+| `xray_tracing_enabled`            | `stage_config.xray_tracing_enabled`               |
+| `stage_variables`                 | `stage_config.variables`                          |
+| `access_log_enabled`              | `logging_config.access_logs.enabled`              |
+| `access_log_format`               | `logging_config.access_logs.format`               |
+| `access_log_retention_in_days`    | `logging_config.access_logs.retention_in_days`    |
 | `execution_log_retention_in_days` | `logging_config.execution_logs.retention_in_days` |
 
 <!-- BEGIN_TF_DOCS -->
+
 ### Requirements
 
-| Name | Version |
-|------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
+| Name                                                                     | Version  |
+| ------------------------------------------------------------------------ | -------- |
+| <a name="requirement_terraform"></a> [terraform](#requirement_terraform) | >= 1.3.0 |
+| <a name="requirement_aws"></a> [aws](#requirement_aws)                   | ~> 6.0   |
 
 ### Providers
 
-| Name | Version |
-|------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.0 |
+| Name                                             | Version |
+| ------------------------------------------------ | ------- |
+| <a name="provider_aws"></a> [aws](#provider_aws) | ~> 6.0  |
 
 ### Modules
 
-| Name | Source | Version |
-|------|--------|---------|
-| <a name="module_label"></a> [label](#module\_label) | bendoerr-terraform-modules/label/null | 0.5.0 |
+| Name                                               | Source                                | Version |
+| -------------------------------------------------- | ------------------------------------- | ------- |
+| <a name="module_label"></a> [label](#module_label) | bendoerr-terraform-modules/label/null | 0.5.0   |
 
 ### Resources
 
-| Name | Type |
-|------|------|
-| [aws_api_gateway_deployment.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_deployment) | resource |
-| [aws_api_gateway_method_settings.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_method_settings) | resource |
-| [aws_api_gateway_rest_api.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_rest_api) | resource |
-| [aws_api_gateway_stage.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_stage) | resource |
-| [aws_cloudwatch_log_group.api_gateway_access_logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
+| Name                                                                                                                                                    | Type     |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| [aws_api_gateway_deployment.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_deployment)                   | resource |
+| [aws_api_gateway_method_settings.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_method_settings)         | resource |
+| [aws_api_gateway_rest_api.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_rest_api)                       | resource |
+| [aws_api_gateway_stage.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_stage)                             | resource |
+| [aws_cloudwatch_log_group.api_gateway_access_logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group)    | resource |
 | [aws_cloudwatch_log_group.api_gateway_execution_logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
 
 ### Inputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_context"></a> [context](#input\_context) | Shared context from the 'bendoerr-terraform-modules/terraform-null-context' module. | <pre>object({<br>    attributes     = list(string)<br>    dns_namespace  = string<br>    environment    = string<br>    instance       = string<br>    instance_short = string<br>    namespace      = string<br>    region         = string<br>    region_short   = string<br>    role           = string<br>    role_short     = string<br>    project        = string<br>    tags           = map(string)<br>  })</pre> | n/a | yes |
-| <a name="input_description"></a> [description](#input\_description) | Description of the API Gateway REST API | `string` | `null` | no |
-| <a name="input_endpoint_configuration"></a> [endpoint\_configuration](#input\_endpoint\_configuration) | Configuration block defining API endpoint configuration including endpoint type and VPC endpoint IDs | <pre>object({<br>    types            = list(string)<br>    vpc_endpoint_ids = optional(list(string))<br>  })</pre> | <pre>{<br>  "types": [<br>    "EDGE"<br>  ]<br>}</pre> | no |
-| <a name="input_logging_config"></a> [logging\_config](#input\_logging\_config) | CloudWatch logging configuration for API Gateway access and execution logs. | <pre>object({<br>    access_logs = optional(object({<br>      enabled           = optional(bool, true)<br>      format            = optional(string)<br>      retention_in_days = optional(number, 7)<br>    }), {})<br>    execution_logs = optional(object({<br>      retention_in_days = optional(number, 7)<br>    }), {})<br>  })</pre> | `{}` | no |
-| <a name="input_method_settings"></a> [method\_settings](#input\_method\_settings) | Map of method paths to their settings. Each key is a method path (format: resource\_path/http\_method, where * can be used as a wildcard), and each value is a map of settings. An empty map disables method settings. | <pre>map(object({<br>    logging_level                              = optional(string, "INFO")<br>    data_trace_enabled                         = optional(bool, false)<br>    metrics_enabled                            = optional(bool, true)<br>    throttling_burst_limit                     = optional(number, 5000)<br>    throttling_rate_limit                      = optional(number, 10000)<br>    caching_enabled                            = optional(bool, false)<br>    cache_ttl_in_seconds                       = optional(number, 300)<br>    cache_data_encrypted                       = optional(bool, true)<br>    require_authorization_for_cache_control    = optional(bool, true)<br>    unauthorized_cache_control_header_strategy = optional(string, "SUCCEED_WITH_RESPONSE_HEADER")<br>  }))</pre> | <pre>{<br>  "*/*": {<br>    "cache_data_encrypted": true,<br>    "cache_ttl_in_seconds": 300,<br>    "caching_enabled": false,<br>    "data_trace_enabled": false,<br>    "logging_level": "INFO",<br>    "metrics_enabled": true,<br>    "require_authorization_for_cache_control": true,<br>    "throttling_burst_limit": 5000,<br>    "throttling_rate_limit": 10000,<br>    "unauthorized_cache_control_header_strategy": "SUCCEED_WITH_RESPONSE_HEADER"<br>  }<br>}</pre> | no |
-| <a name="input_name"></a> [name](#input\_name) | A descriptive but short name used for labels by the 'bendoerr-terraform-modules/terraform-null-label' module. | `string` | `"thing"` | no |
-| <a name="input_openapi_config"></a> [openapi\_config](#input\_openapi\_config) | JSON or YAML string that defines the API using OpenAPI specification | `string` | `null` | no |
-| <a name="input_stage_config"></a> [stage\_config](#input\_stage\_config) | API Gateway stage configuration including caching and tracing settings. | <pre>object({<br>    name                 = optional(string, "api")<br>    description          = optional(string)<br>    variables            = optional(map(string), {})<br>    xray_tracing_enabled = optional(bool, false)<br>    cache_cluster = optional(object({<br>      enabled = optional(bool, false)<br>      size    = optional(string, "0.5")<br>    }), {})<br>  })</pre> | `{}` | no |
+| Name                                                                                                | Description                                                                                                                                                                                                           | Type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Default                                                                                                                                                                                                                                                                                                                                                                                                                                        | Required |
+| --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: |
+| <a name="input_context"></a> [context](#input_context)                                              | Shared context from the 'bendoerr-terraform-modules/terraform-null-context' module.                                                                                                                                   | <pre>object({<br> attributes = list(string)<br> dns_namespace = string<br> environment = string<br> instance = string<br> instance_short = string<br> namespace = string<br> region = string<br> region_short = string<br> role = string<br> role_short = string<br> project = string<br> tags = map(string)<br> })</pre>                                                                                                                                                                                                                                                                        | n/a                                                                                                                                                                                                                                                                                                                                                                                                                                            |   yes    |
+| <a name="input_description"></a> [description](#input_description)                                  | Description of the API Gateway REST API                                                                                                                                                                               | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | `null`                                                                                                                                                                                                                                                                                                                                                                                                                                         |    no    |
+| <a name="input_endpoint_configuration"></a> [endpoint_configuration](#input_endpoint_configuration) | Configuration block defining API endpoint configuration including endpoint type and VPC endpoint IDs                                                                                                                  | <pre>object({<br> types = list(string)<br> vpc_endpoint_ids = optional(list(string))<br> })</pre>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | <pre>{<br> "types": [<br> "EDGE"<br> ]<br>}</pre>                                                                                                                                                                                                                                                                                                                                                                                              |    no    |
+| <a name="input_logging_config"></a> [logging_config](#input_logging_config)                         | CloudWatch logging configuration for API Gateway access and execution logs.                                                                                                                                           | <pre>object({<br> access_logs = optional(object({<br> enabled = optional(bool, true)<br> format = optional(string)<br> retention_in_days = optional(number, 7)<br> }), {})<br> execution_logs = optional(object({<br> retention_in_days = optional(number, 7)<br> }), {})<br> })</pre>                                                                                                                                                                                                                                                                                                           | `{}`                                                                                                                                                                                                                                                                                                                                                                                                                                           |    no    |
+| <a name="input_method_settings"></a> [method_settings](#input_method_settings)                      | Map of method paths to their settings. Each key is a method path (format: resource_path/http_method, where \* can be used as a wildcard), and each value is a map of settings. An empty map disables method settings. | <pre>map(object({<br> logging_level = optional(string, "INFO")<br> data_trace_enabled = optional(bool, false)<br> metrics_enabled = optional(bool, true)<br> throttling_burst_limit = optional(number, 5000)<br> throttling_rate_limit = optional(number, 10000)<br> caching_enabled = optional(bool, false)<br> cache_ttl_in_seconds = optional(number, 300)<br> cache_data_encrypted = optional(bool, true)<br> require_authorization_for_cache_control = optional(bool, true)<br> unauthorized_cache_control_header_strategy = optional(string, "SUCCEED_WITH_RESPONSE_HEADER")<br> }))</pre> | <pre>{<br> "_/_": {<br> "cache_data_encrypted": true,<br> "cache_ttl_in_seconds": 300,<br> "caching_enabled": false,<br> "data_trace_enabled": false,<br> "logging_level": "INFO",<br> "metrics_enabled": true,<br> "require_authorization_for_cache_control": true,<br> "throttling_burst_limit": 5000,<br> "throttling_rate_limit": 10000,<br> "unauthorized_cache_control_header_strategy": "SUCCEED_WITH_RESPONSE_HEADER"<br> }<br>}</pre> |    no    |
+| <a name="input_name"></a> [name](#input_name)                                                       | A descriptive but short name used for labels by the 'bendoerr-terraform-modules/terraform-null-label' module.                                                                                                         | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | `"thing"`                                                                                                                                                                                                                                                                                                                                                                                                                                      |    no    |
+| <a name="input_openapi_config"></a> [openapi_config](#input_openapi_config)                         | JSON or YAML string that defines the API using OpenAPI specification                                                                                                                                                  | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | `null`                                                                                                                                                                                                                                                                                                                                                                                                                                         |    no    |
+| <a name="input_stage_config"></a> [stage_config](#input_stage_config)                               | API Gateway stage configuration including caching and tracing settings.                                                                                                                                               | <pre>object({<br> name = optional(string, "api")<br> description = optional(string)<br> variables = optional(map(string), {})<br> xray_tracing_enabled = optional(bool, false)<br> cache_cluster = optional(object({<br> enabled = optional(bool, false)<br> size = optional(string, "0.5")<br> }), {})<br> })</pre>                                                                                                                                                                                                                                                                             | `{}`                                                                                                                                                                                                                                                                                                                                                                                                                                           |    no    |
 
 ### Outputs
 
-| Name | Description |
-|------|-------------|
-| <a name="output_cloudwatch_log_group_arn"></a> [cloudwatch\_log\_group\_arn](#output\_cloudwatch\_log\_group\_arn) | ARN of the CloudWatch log group for API Gateway access logs |
-| <a name="output_cloudwatch_log_group_name"></a> [cloudwatch\_log\_group\_name](#output\_cloudwatch\_log\_group\_name) | Name of the CloudWatch log group for API Gateway access logs |
-| <a name="output_deployment_id"></a> [deployment\_id](#output\_deployment\_id) | ID of the API Gateway deployment |
-| <a name="output_execution_log_group_arn"></a> [execution\_log\_group\_arn](#output\_execution\_log\_group\_arn) | ARN of the CloudWatch log group for API Gateway execution logs |
-| <a name="output_execution_log_group_name"></a> [execution\_log\_group\_name](#output\_execution\_log\_group\_name) | Name of the CloudWatch log group for API Gateway execution logs |
-| <a name="output_id"></a> [id](#output\_id) | The normalized ID from the 'bendoerr-terraform-modules/terraform-null-label' module. |
-| <a name="output_method_settings_id"></a> [method\_settings\_id](#output\_method\_settings\_id) | IDs of the API Gateway method settings |
-| <a name="output_name"></a> [name](#output\_name) | The provided name given to the module. |
-| <a name="output_rest_api_arn"></a> [rest\_api\_arn](#output\_rest\_api\_arn) | ARN of the REST API |
-| <a name="output_rest_api_execution_arn"></a> [rest\_api\_execution\_arn](#output\_rest\_api\_execution\_arn) | Execution ARN part to be used in lambda\_permission's source\_arn |
-| <a name="output_rest_api_id"></a> [rest\_api\_id](#output\_rest\_api\_id) | ID of the REST API |
-| <a name="output_rest_api_name"></a> [rest\_api\_name](#output\_rest\_api\_name) | Name of the REST API |
-| <a name="output_rest_api_root_resource_id"></a> [rest\_api\_root\_resource\_id](#output\_rest\_api\_root\_resource\_id) | Resource ID of the REST API's root |
-| <a name="output_stage_arn"></a> [stage\_arn](#output\_stage\_arn) | ARN of the API Gateway stage |
-| <a name="output_stage_execution_arn"></a> [stage\_execution\_arn](#output\_stage\_execution\_arn) | Execution ARN to be used in permissions policy |
-| <a name="output_stage_id"></a> [stage\_id](#output\_stage\_id) | ID of the API Gateway stage |
-| <a name="output_stage_invoke_url"></a> [stage\_invoke\_url](#output\_stage\_invoke\_url) | URL to invoke the API pointing to the stage |
-| <a name="output_stage_name"></a> [stage\_name](#output\_stage\_name) | Name of the API Gateway stage |
-| <a name="output_tags"></a> [tags](#output\_tags) | The normalized tags from the 'bendoerr-terraform-modules/terraform-null-label' module. |
+| Name                                                                                                           | Description                                                                            |
+| -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| <a name="output_cloudwatch_log_group_arn"></a> [cloudwatch_log_group_arn](#output_cloudwatch_log_group_arn)    | ARN of the CloudWatch log group for API Gateway access logs                            |
+| <a name="output_cloudwatch_log_group_name"></a> [cloudwatch_log_group_name](#output_cloudwatch_log_group_name) | Name of the CloudWatch log group for API Gateway access logs                           |
+| <a name="output_deployment_id"></a> [deployment_id](#output_deployment_id)                                     | ID of the API Gateway deployment                                                       |
+| <a name="output_execution_log_group_arn"></a> [execution_log_group_arn](#output_execution_log_group_arn)       | ARN of the CloudWatch log group for API Gateway execution logs                         |
+| <a name="output_execution_log_group_name"></a> [execution_log_group_name](#output_execution_log_group_name)    | Name of the CloudWatch log group for API Gateway execution logs                        |
+| <a name="output_id"></a> [id](#output_id)                                                                      | The normalized ID from the 'bendoerr-terraform-modules/terraform-null-label' module.   |
+| <a name="output_method_settings_id"></a> [method_settings_id](#output_method_settings_id)                      | IDs of the API Gateway method settings                                                 |
+| <a name="output_name"></a> [name](#output_name)                                                                | The provided name given to the module.                                                 |
+| <a name="output_rest_api_arn"></a> [rest_api_arn](#output_rest_api_arn)                                        | ARN of the REST API                                                                    |
+| <a name="output_rest_api_execution_arn"></a> [rest_api_execution_arn](#output_rest_api_execution_arn)          | Execution ARN part to be used in lambda_permission's source_arn                        |
+| <a name="output_rest_api_id"></a> [rest_api_id](#output_rest_api_id)                                           | ID of the REST API                                                                     |
+| <a name="output_rest_api_name"></a> [rest_api_name](#output_rest_api_name)                                     | Name of the REST API                                                                   |
+| <a name="output_rest_api_root_resource_id"></a> [rest_api_root_resource_id](#output_rest_api_root_resource_id) | Resource ID of the REST API's root                                                     |
+| <a name="output_stage_arn"></a> [stage_arn](#output_stage_arn)                                                 | ARN of the API Gateway stage                                                           |
+| <a name="output_stage_execution_arn"></a> [stage_execution_arn](#output_stage_execution_arn)                   | Execution ARN to be used in permissions policy                                         |
+| <a name="output_stage_id"></a> [stage_id](#output_stage_id)                                                    | ID of the API Gateway stage                                                            |
+| <a name="output_stage_invoke_url"></a> [stage_invoke_url](#output_stage_invoke_url)                            | URL to invoke the API pointing to the stage                                            |
+| <a name="output_stage_name"></a> [stage_name](#output_stage_name)                                              | Name of the API Gateway stage                                                          |
+| <a name="output_tags"></a> [tags](#output_tags)                                                                | The normalized tags from the 'bendoerr-terraform-modules/terraform-null-label' module. |
+
 <!-- END_TF_DOCS -->
 
 ## Roadmap
@@ -243,7 +247,7 @@ information.
 
 [<img alt="GitHub contributors" src="https://img.shields.io/github/contributors/bendoerr-terraform-modules/terraform-aws-apigateway?logo=github">](https://github.com/bendoerr-terraform-modules/terraform-aws-apigateway/graphs/contributors)
 
-- **Benjamin R. Doerr** - _Terraformer_ - [Benjamin R. Doerr](https://github.com/bendoerr/) - _Built Ben's Terraform Modules_
+- **Benjamin R. Doerr** - *Terraformer* - [Benjamin R. Doerr](https://github.com/bendoerr/) - *Built Ben's Terraform Modules*
 
 ## Supported Versions
 
