@@ -1,9 +1,17 @@
-formatter: "markdown table"
+formatter: markdown table
 
-output:
-  file: "README.md"
-  mode: inject
+version: ">= 0.18.0"
 
 settings:
-  hide-empty: true
-  indent: 3
+  anchor: true
+  escape: true
+  indent: 4
+  required: true
+
+output:
+  file: README.md
+  mode: inject
+  template: |-
+    <!-- BEGIN_TF_DOCS -->
+    {{ .Content }}
+    <!-- END_TF_DOCS -->
