@@ -92,46 +92,71 @@ module "api_gateway" {
 }
 ```
 
+## Version Constraints
+
+This module uses **pessimistic version constraints** (`~>`) for the AWS provider to ensure predictable behavior across deployments:
+
+```hcl
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.0" # Allows 6.x, prevents 7.0
+    }
+  }
+}
+```
+
+**Why pessimistic constraints?**
+
+- Prevents unexpected breaking changes from major provider updates
+- Ensures consistent behavior across environments
+- Makes upgrade impact predictable and controllable
+
+**When AWS provider v7.0 is released**, this module will require an update to support it. This is intentional - we prefer explicit, tested upgrades over automatic major version bumps.
+
+For consuming this module, you can use any AWS provider version that satisfies both your requirements and this module's constraints. Terraform's dependency resolver will find a compatible version automatically.
+
 ## Upgrading
 
 ### v0.x → v1.0 (Breaking Change)
 
 Individual stage and logging variables have been consolidated into `stage_config` and `logging_config` objects:
 
-| Old Variable | New Path |
-|---|---|
-| `stage_name` | `stage_config.name` |
-| `stage_description` | `stage_config.description` |
-| `cache_cluster_enabled` | `stage_config.cache_cluster.enabled` |
-| `cache_cluster_size` | `stage_config.cache_cluster.size` |
-| `xray_tracing_enabled` | `stage_config.xray_tracing_enabled` |
-| `stage_variables` | `stage_config.variables` |
-| `access_log_enabled` | `logging_config.access_logs.enabled` |
-| `access_log_format` | `logging_config.access_logs.format` |
-| `access_log_retention_in_days` | `logging_config.access_logs.retention_in_days` |
+| Old Variable                      | New Path                                          |
+| --------------------------------- | ------------------------------------------------- |
+| `stage_name`                      | `stage_config.name`                               |
+| `stage_description`               | `stage_config.description`                        |
+| `cache_cluster_enabled`           | `stage_config.cache_cluster.enabled`              |
+| `cache_cluster_size`              | `stage_config.cache_cluster.size`                 |
+| `xray_tracing_enabled`            | `stage_config.xray_tracing_enabled`               |
+| `stage_variables`                 | `stage_config.variables`                          |
+| `access_log_enabled`              | `logging_config.access_logs.enabled`              |
+| `access_log_format`               | `logging_config.access_logs.format`               |
+| `access_log_retention_in_days`    | `logging_config.access_logs.retention_in_days`    |
 | `execution_log_retention_in_days` | `logging_config.execution_logs.retention_in_days` |
 
 <!-- BEGIN_TF_DOCS -->
-### Requirements
+#### Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 
-### Providers
+#### Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.0 |
 
-### Modules
+#### Modules
 
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_label"></a> [label](#module\_label) | bendoerr-terraform-modules/label/null | 0.5.0 |
 
-### Resources
+#### Resources
 
 | Name | Type |
 |------|------|
@@ -142,7 +167,7 @@ Individual stage and logging variables have been consolidated into `stage_config
 | [aws_cloudwatch_log_group.api_gateway_access_logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
 | [aws_cloudwatch_log_group.api_gateway_execution_logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
 
-### Inputs
+#### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -155,7 +180,7 @@ Individual stage and logging variables have been consolidated into `stage_config
 | <a name="input_openapi_config"></a> [openapi\_config](#input\_openapi\_config) | JSON or YAML string that defines the API using OpenAPI specification | `string` | `null` | no |
 | <a name="input_stage_config"></a> [stage\_config](#input\_stage\_config) | API Gateway stage configuration including caching and tracing settings. | <pre>object({<br>    name                 = optional(string, "api")<br>    description          = optional(string)<br>    variables            = optional(map(string), {})<br>    xray_tracing_enabled = optional(bool, false)<br>    cache_cluster = optional(object({<br>      enabled = optional(bool, false)<br>      size    = optional(string, "0.5")<br>    }), {})<br>  })</pre> | `{}` | no |
 
-### Outputs
+#### Outputs
 
 | Name | Description |
 |------|-------------|
