@@ -17,7 +17,7 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: infracost/actions/setup@e9d6e6cd65e168e76b0de50ff9957d2fe8bb1832 # v3.0.1
+      - uses: infracost/actions/setup@83181f19702ff30181207e5551150ac89d45b58b # v4.0.0
         with:
           api-key: ${{ secrets.INFRACOST_API_KEY }}
 
