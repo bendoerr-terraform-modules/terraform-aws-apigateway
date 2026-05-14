@@ -14,7 +14,8 @@ resource "aws_api_gateway_domain_name" "this" {
   regional_certificate_arn = var.certificate_type == "REGIONAL" ? var.certificate_arn : null
   certificate_arn          = var.certificate_type == "EDGE" ? var.certificate_arn : null
 
-  security_policy = var.security_policy
+  security_policy      = var.security_policy
+  endpoint_access_mode = var.endpoint_access_mode
   endpoint_configuration {
     types = [var.endpoint_type]
   }
