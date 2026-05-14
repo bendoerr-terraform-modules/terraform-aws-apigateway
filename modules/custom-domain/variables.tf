@@ -53,8 +53,18 @@ variable "certificate_arn" {
 
 variable "security_policy" {
   type        = string
-  description = "TLS security policy for the custom domain. Valid values: TLS_1_0, TLS_1_2"
+  description = "TLS security policy for the custom domain. Valid values include legacy `TLS_1_0`, `TLS_1_2`, and enhanced `SecurityPolicy_*` policies. See https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-security-policies-list.html"
   default     = "TLS_1_2"
+}
+
+variable "endpoint_access_mode" {
+  type        = string
+  description = "Endpoint access mode for the custom domain. Required when `security_policy` is an enhanced `SecurityPolicy_*` policy. Valid values: BASIC, STRICT."
+  default     = null
+  validation {
+    condition     = var.endpoint_access_mode == null || contains(["BASIC", "STRICT"], coalesce(var.endpoint_access_mode, "BASIC"))
+    error_message = "Valid values for endpoint_access_mode are BASIC, STRICT, or null."
+  }
 }
 
 variable "endpoint_type" {
