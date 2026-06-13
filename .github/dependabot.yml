@@ -17,6 +17,8 @@ updates:
           - "patch"
     commit-message:
       prefix: "⬆️ tf:"
+    cooldown:
+      default-days: 14
 
   - package-ecosystem: "gomod"
     directory: "/test"
@@ -30,6 +32,8 @@ updates:
           - "patch"
     commit-message:
       prefix: "⬆️ test:"
+    cooldown:
+      default-days: 14
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -43,3 +47,5 @@ updates:
           - "patch"
     commit-message:
       prefix: "⬆️ gha:"
+    cooldown:
+      default-days: 14
