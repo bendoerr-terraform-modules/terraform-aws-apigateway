@@ -154,7 +154,7 @@ Individual stage and logging variables have been consolidated into `stage_config
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_label"></a> [label](#module\_label) | bendoerr-terraform-modules/label/null | 0.5.0 |
+| <a name="module_label"></a> [label](#module\_label) | bendoerr-terraform-modules/label/null | 1.0.0 |
 
 #### Resources
 
