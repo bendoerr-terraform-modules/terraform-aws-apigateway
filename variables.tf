@@ -44,6 +44,17 @@ variable "endpoint_configuration" {
   default = {
     types = ["EDGE"]
   }
+  nullable = false
+
+  validation {
+    condition     = length(var.endpoint_configuration.types) == 1
+    error_message = "endpoint_configuration.types must contain exactly one value — AWS API Gateway supports a single endpoint type per REST API."
+  }
+
+  validation {
+    condition     = alltrue([for t in var.endpoint_configuration.types : contains(["EDGE", "REGIONAL", "PRIVATE"], t)])
+    error_message = "endpoint_configuration.types may only contain \"EDGE\", \"REGIONAL\", or \"PRIVATE\"."
+  }
 }
 
 variable "stage_config" {
@@ -81,6 +92,22 @@ variable "logging_config" {
   description = "CloudWatch logging configuration for API Gateway access and execution logs."
   default     = {}
   nullable    = false
+
+  validation {
+    condition = contains(
+      [0, 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653],
+      var.logging_config.access_logs.retention_in_days
+    )
+    error_message = "logging_config.access_logs.retention_in_days must be a valid CloudWatch Logs retention value (0, 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, or 3653). 0 means never expire."
+  }
+
+  validation {
+    condition = contains(
+      [0, 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653],
+      var.logging_config.execution_logs.retention_in_days
+    )
+    error_message = "logging_config.execution_logs.retention_in_days must be a valid CloudWatch Logs retention value (0, 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, or 3653). 0 means never expire."
+  }
 }
 
 variable "method_settings" {
@@ -110,5 +137,45 @@ variable "method_settings" {
       require_authorization_for_cache_control    = true
       unauthorized_cache_control_header_strategy = "SUCCEED_WITH_RESPONSE_HEADER"
     }
+  }
+
+  validation {
+    condition = alltrue([
+      for path, s in var.method_settings :
+      s.logging_level == null || contains(["OFF", "ERROR", "INFO"], s.logging_level)
+    ])
+    error_message = "method_settings: logging_level must be one of \"OFF\", \"ERROR\", or \"INFO\"."
+  }
+
+  validation {
+    condition = alltrue([
+      for path, s in var.method_settings :
+      s.unauthorized_cache_control_header_strategy == null || contains(["FAIL_WITH_403", "SUCCEED_WITH_RESPONSE_HEADER", "SUCCEED_WITHOUT_RESPONSE_HEADER"], s.unauthorized_cache_control_header_strategy)
+    ])
+    error_message = "method_settings: unauthorized_cache_control_header_strategy must be one of \"FAIL_WITH_403\", \"SUCCEED_WITH_RESPONSE_HEADER\", or \"SUCCEED_WITHOUT_RESPONSE_HEADER\"."
+  }
+
+  validation {
+    condition = alltrue([
+      for path, s in var.method_settings :
+      s.throttling_rate_limit == null || s.throttling_rate_limit == -1 || s.throttling_rate_limit >= 0
+    ])
+    error_message = "method_settings: throttling_rate_limit must be -1 (throttling disabled) or a non-negative number."
+  }
+
+  validation {
+    condition = alltrue([
+      for path, s in var.method_settings :
+      s.throttling_burst_limit == null || s.throttling_burst_limit == -1 || s.throttling_burst_limit >= 0
+    ])
+    error_message = "method_settings: throttling_burst_limit must be -1 (throttling disabled) or a non-negative integer."
+  }
+
+  validation {
+    condition = alltrue([
+      for path, s in var.method_settings :
+      s.cache_ttl_in_seconds == null || (s.cache_ttl_in_seconds >= 0 && s.cache_ttl_in_seconds <= 3600)
+    ])
+    error_message = "method_settings: cache_ttl_in_seconds must be between 0 and 3600 seconds (the API Gateway cache TTL maximum)."
   }
 }
