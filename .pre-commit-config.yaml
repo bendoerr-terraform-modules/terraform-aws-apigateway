@@ -41,8 +41,17 @@ repos:
         exclude_types:
           - markdown
 
+  # terraform-docs runs before mdformat so the local chain is docs -> mdformat,
+  # byte-identical to the CI drift gate. Config-driven via .terraform-docs.yml
+  # (indent 3, matching the org and this repo's submodules).
+  - repo: https://github.com/terraform-docs/terraform-docs
+    rev: 9d4455198941806aa02ec14369de030cda2c2b59 # frozen: v0.24.0
+    hooks:
+      - id: terraform-docs-system
+        args: ["."]
+
   - repo: https://github.com/executablebooks/mdformat
-    rev: ff29be1a1ba8029d9375882aa2c812b62112a593 # frozen: 0.7.22
+    rev: 08fba30538869a440b5059de90af03e3502e35fb # frozen: 0.7.17
     hooks:
       - id: mdformat
 
@@ -50,12 +59,6 @@ repos:
     rev: 586c3ea3f51230da42bab657c6a32e9e66c364f0 # frozen: v0.44.0
     hooks:
       - id: markdownlint-fix-docker
-
-  - repo: https://github.com/terraform-docs/terraform-docs
-    rev: 2a6efef6469c3ebb961a3e1388639573d886bfbb # frozen: v0.18.0
-    hooks:
-      - id: terraform-docs-system
-        args: ["."]
 
   - repo: https://github.com/golangci/golangci-lint
     rev: 8c14421d29bd005dee63044d07aa897b7d1bf8b0 # frozen: v2.1.5
