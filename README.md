@@ -223,7 +223,7 @@ contributions you make are **greatly appreciated**.
 
 - If you have suggestions for adding or removing projects, feel free to
   [open an issue](https://github.com/bendoerr-terraform-modules/terraform-aws-apigateway/issues/new) to discuss it,
-  or directly create a pull request after you edit the _README.md_ file with necessary changes.
+  or directly create a pull request after you edit the *README.md* file with necessary changes.
 - Please make sure you check your spelling and grammar.
 - Create individual PR for each suggestion.
 
@@ -247,7 +247,7 @@ information.
 
 [<img alt="GitHub contributors" src="https://img.shields.io/github/contributors/bendoerr-terraform-modules/terraform-aws-apigateway?logo=github">](https://github.com/bendoerr-terraform-modules/terraform-aws-apigateway/graphs/contributors)
 
-- **Benjamin R. Doerr** - _Terraformer_ - [Benjamin R. Doerr](https://github.com/bendoerr/) - _Built Ben's Terraform Modules_
+- **Benjamin R. Doerr** - *Terraformer* - [Benjamin R. Doerr](https://github.com/bendoerr/) - *Built Ben's Terraform Modules*
 
 ## Supported Versions
 
