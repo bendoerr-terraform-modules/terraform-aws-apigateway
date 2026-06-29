@@ -1,12 +1,29 @@
 #!/usr/bin/env bash
-# Regenerate the README terraform-docs block exactly as the docs gate does.
+# Regenerate the README terraform-docs block exactly as the docs gate does, via
+# the pinned pre-commit hooks (terraform-docs v0.24.0, then mdformat 0.7.17) so
+# the output matches CI regardless of locally-installed tool versions.
 #
-# This delegates to the same pre-commit hooks CI runs — terraform-docs
-# (markdown table, --output-mode inject) followed by mdformat — so this helper
-# can never drift from the gate again. (It previously ran a bare
-# 'terraform-docs markdown --hide-empty' with no inject and no mdformat pass,
-# which produced a README the CI docs-check then rejected.)
+# Two footguns this guards against (both bit the first cut of this script):
+#   1. `pre-commit run` takes ONE hook id, so the hooks run as separate calls.
+#   2. terraform-docs-system is `types: [terraform]`; a markdown-only --files list matches
+#      zero terraform files and the hook is SILENTLY SKIPPED (table never
+#      regenerates). --all-files puts the module's .tf files in scope so it fires.
+# Order matters: terraform-docs regenerates the table, then mdformat normalizes
+# it (underscore escaping + blank-line rules) into the exact form the gate checks.
 #
-# pre-commit exits non-zero when a hook modifies a file, which is the normal
-# outcome here (regenerating == modifying), so that is not treated as failure.
-pre-commit run terraform-docs-system mdformat --files README.md || true
+# pre-commit exits non-zero when a hook rewrites a file (the normal outcome when
+# regenerating) — that case is tolerated, but genuine hook errors are surfaced.
+set -uo pipefail
+
+run_hook() {
+  local out rc
+  out="$(pre-commit run "$@" 2>&1)"; rc=$?
+  printf '%s\n' "$out"
+  if [ "$rc" -ne 0 ] && ! grep -q 'files were modified by this hook' <<<"$out"; then
+    echo "update-tf-docs: 'pre-commit run $*' failed (see output above)" >&2
+    exit "$rc"
+  fi
+}
+
+run_hook terraform-docs-system --all-files
+run_hook mdformat --files README.md
