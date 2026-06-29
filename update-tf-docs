@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
-
-terraform-docs markdown     \
-    --output-file README.md \
-    --hide-empty            \
-    --indent 3              \
-    .
+# Regenerate the README terraform-docs block exactly as the docs gate does.
+#
+# This delegates to the same pre-commit hooks CI runs — terraform-docs
+# (markdown table, --output-mode inject) followed by mdformat — so this helper
+# can never drift from the gate again. (It previously ran a bare
+# 'terraform-docs markdown --hide-empty' with no inject and no mdformat pass,
+# which produced a README the CI docs-check then rejected.)
+#
+# pre-commit exits non-zero when a hook modifies a file, which is the normal
+# outcome here (regenerating == modifying), so that is not treated as failure.
+pre-commit run terraform-docs-system mdformat --files README.md || true
