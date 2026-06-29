@@ -1,7 +1,29 @@
 #!/usr/bin/env bash
+# Regenerate the README terraform-docs block exactly as the docs gate does, via
+# the pinned pre-commit hooks (terraform-docs v0.24.0, then mdformat 0.7.17) so
+# the output matches CI regardless of locally-installed tool versions.
+#
+# Two footguns this guards against (both bit the first cut of this script):
+#   1. `pre-commit run` takes ONE hook id, so the hooks run as separate calls.
+#   2. terraform-docs-system is `types: [terraform]`; a markdown-only --files list matches
+#      zero terraform files and the hook is SILENTLY SKIPPED (table never
+#      regenerates). --all-files puts the module's .tf files in scope so it fires.
+# Order matters: terraform-docs regenerates the table, then mdformat normalizes
+# it (underscore escaping + blank-line rules) into the exact form the gate checks.
+#
+# pre-commit exits non-zero when a hook rewrites a file (the normal outcome when
+# regenerating) — that case is tolerated, but genuine hook errors are surfaced.
+set -uo pipefail
 
-terraform-docs markdown     \
-    --output-file README.md \
-    --hide-empty            \
-    --indent 3              \
-    .
+run_hook() {
+  local out rc
+  out="$(pre-commit run "$@" 2>&1)"; rc=$?
+  printf '%s\n' "$out"
+  if [ "$rc" -ne 0 ] && ! grep -q 'files were modified by this hook' <<<"$out"; then
+    echo "update-tf-docs: 'pre-commit run $*' failed (see output above)" >&2
+    exit "$rc"
+  fi
+}
+
+run_hook terraform-docs-system --all-files
+run_hook mdformat --files README.md
