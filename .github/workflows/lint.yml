@@ -106,10 +106,14 @@ jobs:
           echo "paperwork verified: scanner reported CLEAN and the findings file is empty"
 
   paperwork-selftest:
-    # NO `if:` - this runs in the template too, which is the entire point. The paperwork job above
-    # is skipped here, so without this the gate's logic is never executed in the repo that owns it,
-    # and a skipped job reports as `skipped`, which every green-check reading treats as non-failing.
-    # A fixture is not the repo it runs in.
+    # NO `if:` guard, deliberately - and this comment is written CONTEXT-NEUTRALLY because the file
+    # is copied into every descendant, where a template-only sentence becomes false.
+    # In the TEMPLATE, the paperwork job above is skipped by its own `if:`, so without this job the
+    # gate's logic would never execute in the repo that authors it - and a skipped job reports as
+    # `skipped`, which every green-check reading correctly treats as non-failing.
+    # In a DESCENDANT, the paperwork job does run, and this job is additionally that repo's own
+    # forced control: copies are claims until each one's control has fired in its own CI.
+    # Either way a fixture is not the repo it runs in, which is why it is correct in both.
     runs-on: ubuntu-latest
     steps:
       - name: "Harden Runner"
