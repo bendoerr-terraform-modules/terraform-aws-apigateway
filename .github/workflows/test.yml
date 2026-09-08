@@ -84,7 +84,7 @@ jobs:
           cache: true
 
       - name: "Setup Terraform"
-        uses: step-security/setup-terraform@11f45fe036ccfd27d231861d38b183d405b059a9 # v4.0.0
+        uses: step-security/setup-terraform@856d52e2f56619a4928ffc98bf60837d96a8e682 # v4.0.1
 
       - name: "Setup node"
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
