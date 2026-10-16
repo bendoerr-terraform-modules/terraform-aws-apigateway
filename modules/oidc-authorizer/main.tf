@@ -16,7 +16,7 @@ module "oidc_authorizer_lambda" {
   filename         = var.lambda_zip_path != null ? var.lambda_zip_path : local_sensitive_file.bootstrap[0].filename
   source_code_hash = var.lambda_zip_path != null ? null : local_sensitive_file.bootstrap[0].content_base64sha256
   handler          = "bootstrap"
-  runtime          = "provided.al2"
+  runtime          = var.lambda_runtime
   architectures    = ["arm64"]
 
   publish     = true

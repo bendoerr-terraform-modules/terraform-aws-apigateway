@@ -90,6 +90,7 @@ module "oidc_authorizer" {
 | <a name="input_identity_validation_expression"></a> [identity_validation_expression](#input_identity_validation_expression) | Regular expression to validate the token format (optional) | `string` | `null` | no |
 | <a name="input_issuer_url"></a> [issuer_url](#input_issuer_url) | URL of the OIDC issuer (e.g., <https://accounts.google.com>) | `string` | n/a | yes |
 | <a name="input_jwks_uri"></a> [jwks_uri](#input_jwks_uri) | The URL of the OIDC provider JWKS (Endpoint providing public keys for verification). | `string` | n/a | yes |
+| <a name="input_lambda_runtime"></a> [lambda_runtime](#input_lambda_runtime) | Lambda runtime for the authorizer function. Defaults to provided.al2023; provided.al2 is deprecated by AWS. | `string` | `"provided.al2023"` | no |
 | <a name="input_lambda_zip_path"></a> [lambda_zip_path](#input_lambda_zip_path) | Path to a custom Lambda ZIP file (if not provided, will download from GitHub) | `string` | `null` | no |
 | <a name="input_log_level"></a> [log_level](#input_log_level) | Log level for the Lambda function (debug, info, warn, error) | `string` | `"error"` | no |
 | <a name="input_name"></a> [name](#input_name) | A descriptive but short name used for labels by the 'bendoerr-terraform-modules/terraform-null-label' module. | `string` | `"oidc-authorizer"` | no |
