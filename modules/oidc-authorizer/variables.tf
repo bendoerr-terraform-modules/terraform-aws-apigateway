@@ -94,6 +94,18 @@ variable "lambda_zip_path" {
   description = "Path to a custom Lambda ZIP file (if not provided, will download from GitHub)"
 }
 
+variable "lambda_runtime" {
+  type        = string
+  default     = "provided.al2023"
+  description = "Lambda runtime for the authorizer function. Defaults to provided.al2023 (provided.al2 is deprecated by AWS). Set provided.al2 only if a custom lambda_zip_path or a non-default oidc_authorizer_version needs al2-only libraries such as OpenSSL 1.x or libcrypt.so.1."
+  nullable    = false
+
+  validation {
+    condition     = contains(["provided.al2023", "provided.al2"], var.lambda_runtime)
+    error_message = "lambda_runtime must be one of: provided.al2023, provided.al2."
+  }
+}
+
 variable "oidc_authorizer_version" {
   type        = string
   default     = "0.1.2"
