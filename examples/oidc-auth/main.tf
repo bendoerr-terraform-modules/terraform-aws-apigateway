@@ -114,7 +114,7 @@ module "oidc_authorizer" {
 
 module "label" {
   source  = "bendoerr-terraform-modules/label/null"
-  version = "1.0.0"
+  version = "1.0.1"
   context = module.context
   name    = "api"
 }
@@ -122,7 +122,7 @@ module "label" {
 # Public Lambda function (no authorization)
 module "lambda_public" {
   source  = "bendoerr-terraform-modules/lambda/aws"
-  version = "0.2.0"
+  version = "0.4.0"
 
   context     = module.context
   name        = "${module.label.id}-public"
@@ -137,7 +137,7 @@ module "lambda_public" {
 # Protected Lambda function (requires authorization)
 module "lambda_protected" {
   source  = "bendoerr-terraform-modules/lambda/aws"
-  version = "0.2.0"
+  version = "0.4.0"
 
   context     = module.context
   name        = "${module.label.id}-protected"
