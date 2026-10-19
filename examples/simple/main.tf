@@ -57,7 +57,7 @@ module "this" {
 module "lambda" {
   source  = "bendoerr-terraform-modules/lambda/aws"
   context = module.context
-  version = "0.2.0"
+  version = "0.4.0"
 
   name        = "simple"
   description = "Example Lambda Handler"
