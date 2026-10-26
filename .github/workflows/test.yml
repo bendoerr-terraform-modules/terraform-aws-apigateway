@@ -20,7 +20,7 @@ jobs:
       id-token: write
     steps:
       - name: "Harden Runner"
-        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
         with:
           egress-policy: block
           allowed-endpoints: >
@@ -87,7 +87,7 @@ jobs:
         uses: step-security/setup-terraform@856d52e2f56619a4928ffc98bf60837d96a8e682 # v4.0.1
 
       - name: "Setup node"
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "22.x" # Match this with your Lambda runtime version
       - name: "Install JUnit Reporter"
@@ -137,7 +137,7 @@ jobs:
         run: go-junit-report -set-exit-code < results.out > results.xml
 
       - name: "Upload Test Results"
-        uses: step-security/test-summary-action@67391420afc3eba57f4cb249a1a5a677e0eacd9e # v2.4.3
+        uses: step-security/test-summary-action@abf583950a62dd915f2909155d69775d5cde6a40 # v2.6.0
         if: hashFiles('test/results.xml') != ''
         with:
           paths: test/results.xml
